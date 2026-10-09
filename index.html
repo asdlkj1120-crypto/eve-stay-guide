@@ -1575,8 +1575,7 @@ aria-label="전화하기">
    PAGE NAVIGATION
 ========================= */
 
-function showPage(id){
-
+function renderPage(id){
   const target=document.getElementById(id);
 
   if(!target){
@@ -1589,9 +1588,34 @@ function showPage(id){
   });
 
   target.classList.add("active");
-
   window.scrollTo(0,0);
 }
+
+function showPage(id){
+  const current=document.querySelector(".page.active");
+  const currentId=current ? current.id : "home";
+
+  if(id===currentId)return;
+
+  history.pushState({eveGuidePage:id},"","#"+id);
+  renderPage(id);
+}
+
+window.addEventListener("popstate",function(event){
+  const id=(event.state&&event.state.eveGuidePage)
+    ? event.state.eveGuidePage
+    : (location.hash ? location.hash.substring(1) : "home");
+
+  renderPage(document.getElementById(id) ? id : "home");
+});
+
+document.addEventListener("DOMContentLoaded",function(){
+  const initialId=location.hash ? location.hash.substring(1) : "home";
+  const safeId=document.getElementById(initialId) ? initialId : "home";
+
+  history.replaceState({eveGuidePage:safeId},"","#"+safeId);
+  renderPage(safeId);
+});
 
 
 /* =========================
